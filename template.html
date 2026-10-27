@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="Offline-first agent skills library, tier list and migration backup companion.">
+  <title>Skill Vault — Your agent toolkit</title>
+  <script>
+    try { document.documentElement.dataset.theme = localStorage.getItem('skill-vault:theme') === 'dark' ? 'dark' : 'light'; }
+    catch { document.documentElement.dataset.theme = 'light'; }
+  </script>
+  <style>
+__STYLE_CSS__
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar" aria-label="เมนูหลัก">
+      <div class="brand">
+        <div class="brand-logo" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="8" height="8" rx="2" stroke="currentColor" stroke-width="2"/><rect x="13" y="3" width="8" height="8" rx="2" fill="currentColor"/><rect x="3" y="13" width="8" height="8" rx="2" fill="currentColor"/><rect x="13" y="13" width="8" height="8" rx="2" stroke="currentColor" stroke-width="2"/></svg>
+        </div>
+        <div><div class="brand-name">Skill Vault</div><div class="brand-sub">LOCAL WORKSPACE</div></div>
+      </div>
+      <div class="nav-caption">WORKSPACE</div>
+      <nav class="nav-group" aria-label="แท็บหลัก">
+        <button type="button" class="nav-btn active" data-nav="library" aria-current="page" title="คลัง Skills">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="7" height="7" rx="1"/><rect x="14" y="4" width="7" height="7" rx="1"/><rect x="3" y="15" width="7" height="6" rx="1"/><rect x="14" y="15" width="7" height="6" rx="1"/></svg>
+          <span class="nav-text">คลัง Skills</span><span class="nav-badge" id="navSkillCount">75</span>
+        </button>
+        <button type="button" class="nav-btn" data-nav="tier" title="Tier board">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5h14M5 12h10M5 19h6"/><circle cx="19" cy="12" r="2"/></svg>
+          <span class="nav-text">Tier board</span><span class="nav-badge">S–D</span>
+        </button>
+        <button type="button" class="nav-btn" data-nav="sources" title="แหล่งที่มา">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M10.5 7.5l-4 9m7-9l4 9M7.5 19h9"/></svg>
+          <span class="nav-text">แหล่งที่มา</span>
+        </button>
+        <button type="button" class="nav-btn" data-nav="migration" title="ย้ายคอม / Backup">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-4-4m4 4 4-4"/><path d="M4 15v5h16v-5"/></svg>
+          <span class="nav-text">ย้ายคอม / Backup</span>
+        </button>
+      </nav>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-tip">รายชื่อ Skills จาก OMP<br>จัดหมวดและให้ Tier ได้ตามใจ<br>พร้อมเก็บข้อมูลสำหรับย้ายเครื่อง</div>
+      <div class="side-bottom">
+        <div class="online-state"><span class="state-dot"></span>LOCAL · OFFLINE</div>
+        <p>จัดเก็บข้อมูลใน Browser เครื่องนี้<br>Export JSON เพื่อย้ายไปเครื่องใหม่</p>
+      </div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <div class="breadcrumb">SKILL VAULT <span aria-hidden="true">/</span> <strong id="breadcrumb">SKILL LIBRARY</strong></div>
+        <div class="top-actions">
+          <span class="top-count" id="topCount">75 SKILLS TRACKED</span>
+          <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Toggle light/dark theme">
+            <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 15.6A8.5 8.5 0 0 1 8.4 3.4 8.5 8.5 0 1 0 20.6 15.6Z"/></svg>
+            <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M19.07 4.93l-1.42 1.42M6.35 17.65l-1.42 1.42"/></svg>
+          </button>
+          <button type="button" class="btn btn-ghost" data-action="import-inventory" aria-label="นำเข้าข้อมูล Skill Vault">นำเข้า JSON</button>
+          <button type="button" class="btn btn-primary" data-action="export-json">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 3v12m0 0-4-4m4 4 4-4"/><path d="M4 17v4h16v-4"/></svg> Export JSON
+          </button>
+        </div>
+      </header>
+      <section class="page" id="page-library" aria-label="คลัง Skills">
+        <div class="hero">
+          <div>
+            <p class="eyebrow">WORKSPACE / OVERVIEW</p>
+            <h1>Every skill.<br><span class="soft">One workspace.</span></h1>
+            <p class="intro">รวบรวม Skills ทั้งหมดที่ OMP มองเห็นไว้ในที่เดียว ค้นหา จัดหมวด บันทึกต้นทาง และเตรียมข้อมูลไว้เมื่อต้องเปลี่ยนคอมพิวเตอร์</p>
+          </div>
+          <div class="hero-note">CATALOG / 01<br>PORTABLE · HTML</div>
+        </div>
+        <div class="stats" id="libraryStats" aria-label="ภาพรวม Skills"></div>
+        <div class="section-head">
+          <h2 class="section-heading">Skills directory</h2>
+          <button type="button" class="btn btn-small" data-action="add-skill">+ เพิ่ม Skill</button>
+        </div>
+        <div class="toolbar" role="search" aria-label="กรอง Skills">
+          <label class="search-field">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>
+            <span class="screen-reader-only">ค้นหา Skill</span><input id="searchInput" type="search" autocomplete="off" placeholder="ค้นหา skill, description, repo..."><span class="search-shortcut">/</span>
+          </label>
+          <label class="screen-reader-only" for="categoryFilter">หมวดหมู่</label><select class="filter-select" id="categoryFilter"><option value="all">ทุกหมวดหมู่</option></select>
+          <label class="screen-reader-only" for="sourceFilter">Repository</label><select class="filter-select" id="sourceFilter"><option value="all">ทุกแหล่งที่มา</option></select>
+          <label class="screen-reader-only" for="tierFilter">Tier</label><select class="filter-select" id="tierFilter"><option value="all">ทุก Tier</option><option value="S">S · Essential</option><option value="A">A · Frequent</option><option value="B">B · Useful</option><option value="C">C · Occasional</option><option value="D">D · Low priority</option><option value="U">ยังไม่จัด Tier</option></select>
+          <label class="screen-reader-only" for="foundFilter">ตรวจพบจากเครื่อง</label><select class="filter-select" id="foundFilter"><option value="all">ทุกสถานะ</option><option value="found">ตรวจพบไฟล์แล้ว</option><option value="unknown">ยังไม่พบ Path</option></select>
+        </div>
+        <div class="info-strip"><div class="strip-side"><span id="listCount">75 รายการ</span><span class="small-dot"></span><span>เลือก Tier บนการ์ด หรือคลิกชื่อเพื่อแก้ไข</span></div><span class="mono" id="sourceLegend">SOURCE / CANDIDATE</span></div>
+        <div class="card-grid" id="skillGrid"></div>
+        <button type="button" class="btn load-more" id="loadMoreBtn" hidden>แสดง Skills เพิ่ม</button>
+      </section>
+      <section class="page" id="page-tier" aria-label="Tier board" hidden>
+        <div class="hero">
+          <div><p class="eyebrow">WORKSPACE / PRIORITIES</p><h1>Your personal<br><span class="soft">tier board.</span></h1><p class="intro">ลากชื่อ Skill ไปยังระดับที่ต้องการ หรือกดชื่อเพื่อเปลี่ยน Tier ในหน้ารายละเอียด ทุกการเปลี่ยนแปลงจะบันทึกใน Browser เครื่องนี้</p></div>
+          <div class="hero-note">DRAG / DROP<br>S · A · B · C · D</div>
+        </div>
+        <div class="hint-banner">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/></svg>
+          <div><strong>Tier เริ่มต้นเป็นเพียงข้อเสนอ</strong> จากประโยชน์ใช้งานทั่วไป ยังไม่ได้อ่านไฟล์ Skill จริงทีละตัว คุณสามารถลากวาง ปรับอันดับ หรือรีเซ็ตเป็นยังไม่จัด Tier ได้</div>
+        </div>
+        <div class="board-tools"><button type="button" class="btn" data-action="reset-suggested">ใช้ Tier เริ่มต้น</button><button type="button" class="btn btn-ghost" data-action="clear-tiers">ล้าง Tier ทั้งหมด</button><button type="button" class="btn btn-ghost" data-action="export-markdown">Export Markdown</button></div>
+        <div class="tier-board" id="tierBoard"></div>
+      </section>
+      <section class="page" id="page-sources" aria-label="แหล่งที่มา" hidden>
+        <div class="hero"><div><p class="eyebrow">WORKSPACE / ORIGINS</p><h1>Where they<br><span class="soft">came from.</span></h1><p class="intro">จับกลุ่มตาม Repository ที่เชื่อว่าเป็นต้นทางของ Skills โดยแยกจาก Provider/ตำแหน่งไฟล์จริงบนคอมคุณ ซึ่งจะตรวจพบเมื่อ Import รายงาน Scan</p></div><div class="hero-note">REPOSITORY / MAP<br>EDITABLE SOURCES</div></div>
+        <div class="hint-banner"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/></svg><div><strong>Repository = ต้นทางที่คาดว่าใช่</strong> ไม่เท่ากับตำแหน่งที่คุณติดตั้งผ่าน Claude, Codex หรือ Antigravity และไม่ได้ยืนยันจาก `SKILL.md` ในเครื่องจริง คุณแก้ไขแหล่งที่มาได้ในการ์ดแต่ละรายการ</div></div>
+        <div class="sources-layout"><div><div class="section-head"><h2 class="section-heading">Repository groups</h2><span class="section-meta" id="sourceGroupCount"></span></div><div class="source-list" id="sourcesList"></div></div><div class="source-side-column"><div class="aside-panel"><h3>Potential overlaps</h3><p>ตัวอย่างชื่อหรือ Workflow ที่อาจซ้ำกัน ควรตรวจเนื้อหาก่อนลบจากเครื่องจริง</p><div class="dupe-line">context7-mcp <span>↔</span> agents/context7-mcp</div><div class="dupe-line">tdd <span>↔</span> test-driven-development</div><div class="dupe-line">code-review <span>↔</span> code-review-and-quality</div><div class="dupe-line">systematic-debugging <span>↔</span> diagnosing-bugs</div><div class="dupe-line">frontend-design <span>↔</span> design-taste-frontend</div></div><div class="aside-panel"><h3>Detected provider paths</h3><p>แสดงตำแหน่งที่ตรวจพบบนเครื่องจริงหลัง Import `skill-vault-scan.json`</p><div id="detectedProviders"><span class="path-label">ยังไม่มี Scan report</span></div></div></div></div>
+      </section>
+      <section class="page" id="page-migration" aria-label="Backup และย้ายคอม" hidden>
+        <div class="hero"><div><p class="eyebrow">WORKSPACE / MIGRATION</p><h1>New machine.<br><span class="soft">Same toolkit.</span></h1><p class="intro">มี 2 ส่วนที่ต้องสำรอง: <strong style="color:#e9edf0">รายการ / Tier / Notes</strong> ในเว็บนี้ และ <strong style="color:#e9edf0">ไฟล์ Skill จริง</strong> ที่ CLI เก็บไว้ ทั้งสองส่วนไม่ใช่สิ่งเดียวกัน</p></div><div class="hero-note">MIGRATION KIT<br>WINDOWS · LOCAL</div></div>
+        <div class="migration-grid">
+          <div class="migration-panel">
+            <h2>Migration checklist</h2><p>ทำตามลำดับก่อนเปลี่ยนคอม รายการที่ติ๊กเสร็จจะจำไว้ใน Browser เครื่องนี้เท่านั้น</p>
+            <div class="step"><input type="checkbox" id="step-1" data-check="1"><div><h3><label for="step-1">01 / Export รายการ Skills</label></h3><p>บันทึกชื่อ หมวด Tier แหล่งที่มา และ Notes เป็น JSON เพื่อนำเข้าเว็บนี้ในคอมใหม่</p><button type="button" class="btn btn-small" data-action="export-json">Export JSON</button><button type="button" class="btn btn-small btn-ghost" data-action="export-markdown">Export Markdown</button></div></div>
+            <div class="step"><input type="checkbox" id="step-2" data-check="2"><div><h3><label for="step-2">02 / Scan + Backup ไฟล์ Skills จริง</label></h3><p>ดาวน์โหลด PowerShell จากเว็บนี้ แล้วรันในเครื่องเก่า สคริปต์จะค้นหา `SKILL.md` ตามโฟลเดอร์ CLI ที่พบบ่อย และสร้าง ZIP กับรายงาน JSON (ไม่สำรอง Config/API Keys)</p><button type="button" class="btn btn-small" data-action="download-script">ดาวน์โหลด PowerShell</button><div class="code-line"><code id="scanCommand">powershell -NoProfile -ExecutionPolicy Bypass -File ".\skill-vault-backup.ps1"</code><button type="button" data-action="copy-command">คัดลอก</button></div><p class="warn" style="margin-top:10px">ตรวจอ่านสคริปต์และ ZIP ก่อนใช้หรือส่งต่อ โดยเฉพาะหากมีไฟล์ส่วนตัวในโฟลเดอร์ Skill</p></div></div>
+            <div class="step"><input type="checkbox" id="step-3" data-check="3"><div><h3><label for="step-3">03 / Import ผล Scan เพื่อตรวจสอบ</label></h3><p>นำไฟล์ `skill-vault-scan.json` ที่สคริปต์สร้างเข้ามาเพื่อจับคู่ชื่อกับ Path ที่พบจริง แล้วตรวจว่า Skills สำคัญครบหรือไม่</p><button type="button" class="btn btn-small" data-action="import-scan">Import Scan report</button><button type="button" class="btn btn-small btn-ghost" data-action="export-json">Export JSON อีกครั้ง</button><div class="path-label" id="scanInfo" style="margin-top:7px">ยังไม่ได้ Import รายงานจากเครื่อง</div></div></div>
+            <div class="step"><input type="checkbox" id="step-4" data-check="4"><div><h3><label for="step-4">04 / ย้ายไฟล์และ Restore</label></h3><p>เก็บ HTML + JSON + ZIP ไว้บนไดรฟ์ที่ย้ายได้ ติดตั้ง CLI/Plugins บนคอมใหม่ให้เรียบร้อย จากนั้น Restore Skill ไปยัง Path ที่ถูกต้อง และ Import JSON กลับเข้าเว็บ</p><button type="button" class="btn btn-small btn-ghost" data-action="import-inventory">Import Skill Vault JSON</button></div></div>
+          </div>
+          <div>
+            <div class="migration-panel"><h2>Backup readiness</h2><p>สถานะจากรายการในเว็บ ยังไม่ใช่การยืนยันว่า ZIP สำรองสำเร็จ</p><div class="scan-stat"><span>Skills ในคลัง</span><strong id="readyTotal">75</strong></div><div class="scan-stat"><span>พบ Path จาก Scan</span><strong id="readyFound">0 / 75</strong></div><div class="scan-stat"><span>ไม่มี Path ยืนยัน</span><strong id="readyUnfound">75</strong></div><div class="scan-stat"><span>Scan ล่าสุด</span><strong id="readyScanDate">—</strong></div><div class="muted-box"><strong style="color:#eee">ข้อจำกัด</strong><br>เว็บไม่สามารถอ่าน `~/.claude`, `~/.codex` หรือ Plugin Cache อัตโนมัติได้ รายงาน Scan ช่วยระบุตำแหน่งไฟล์ ส่วนการติดตั้ง Plugin Registry, MCP, Settings และ Credentials ต้องย้ายแยกตาม CLI</div></div>
+            <div class="migration-panel" style="margin-top:16px"><h2>Keep these 4 files</h2><p>เตรียมไว้ก่อนย้ายเครื่อง</p><div class="scan-stat"><span><span class="mono">skill-vault.html</span></span><strong>WEB</strong></div><div class="scan-stat"><span><span class="mono">skill-vault.json</span></span><strong>DATA</strong></div><div class="scan-stat"><span><span class="mono">skill-vault-scan.json</span></span><strong>PATHS</strong></div><div class="scan-stat"><span><span class="mono">skill-vault-backup-*.zip</span></span><strong>FILES</strong></div><button type="button" class="btn btn-small btn-ghost" data-action="reset-catalog" style="margin-top:16px">คืนรายการเริ่มต้น 75 ตัว</button></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <div class="drawer-backdrop" id="drawerBackdrop" hidden><aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle"><div class="drawer-head"><div><small id="drawerKicker">SKILL DETAILS</small><h2 id="drawerTitle">Skill detail</h2></div><button type="button" class="icon-btn" id="closeDrawer" aria-label="ปิดรายละเอียด"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg></button></div><form class="drawer-form" id="skillForm"></form></aside></div>
+  <input id="inventoryFile" type="file" accept=".json,application/json" hidden>
+  <input id="scanFile" type="file" accept=".json,application/json" hidden>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <script id="seedData" type="application/json">__SEED_JSON__</script>
+  <script id="backupPowerShell" type="text/plain">__PS_SCRIPT__</script>
+  <script>
+    'use strict';
+    const SEED = JSON.parse(document.getElementById('seedData').textContent);
+    const SOURCES = SEED.sources;
+    const CATEGORIES = SEED.categories;
+    const TIERS = [
+      {id:'S', name:'Essential',desc:'ใช้บ่อย / ขาดไม่ได้'},
+      {id:'A', name:'Frequent',desc:'มีประโยชน์สูง'},
+      {id:'B', name:'Useful',desc:'ใช้ตามลักษณะงาน'},
+      {id:'C', name:'Occasional',desc:'นาน ๆ ครั้ง / ทับซ้อน'},
+      {id:'D', name:'Low priority',desc:'เฉพาะทาง / เลิกใช้ได้'},
+      {id:'U', name:'UNRANKED',desc:'ยังไม่ได้จัดอันดับ'}
+    ];
+    const STORAGE_KEY = 'skill-vault:inventory:v1';
+    const clone = (value) => JSON.parse(JSON.stringify(value));
+    const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const safeURL = (v) => { try { const url=new URL(String(v || '')); return ['https:','http:'].includes(url.protocol) ? url.href : ''; } catch { return ''; } };
+    const getSource = (skill) => skill.originId === 'custom' ? {name:skill.customOriginLabel || 'Custom source',repo:skill.customOriginLabel || 'Custom repository',url:safeURL(skill.customOriginUrl)} : (SOURCES[skill.originId] || SOURCES.conflict);
+    const tierLabel = (tier) => tier === 'U' ? '—' : tier;
+    const formatNum = (number) => String(number).padStart(2, '0');
+    const ui = {
+      page: 'library', drawerId: null, previousFocus: null, visible: 24,
+      filters: {search:'',category:'all',source:'all',tier:'all',found:'all'},
+      state: null
+    };
+    function baseState() { return {version:1, skills:clone(SEED.skills), checklist:{1:false,2:false,3:false,4:false}, lastScan:null}; }
+    function normalSkill(input, fallbackId) {
+      const name=String(input.name || '').trim().slice(0,160);
+      if(!name) return null;
+      const cat=CATEGORIES.some(c=>c.id===input.category) ? input.category : CATEGORIES[0].id;
+      return {id:String(input.id || fallbackId || name),number:Number(input.number)||0,name,category:cat,
+        originId: (SOURCES[input.originId] || input.originId==='custom') ? input.originId : 'conflict',
+        tier:TIERS.some(t=>t.id===input.tier) ? input.tier : 'U',
+        description:String(input.description||'').slice(0,600), notes:String(input.notes||'').slice(0,12000),
+        locations:Array.isArray(input.locations) ? input.locations.filter(x=>x && typeof x.path==='string').slice(0,60).map(x=>({provider:String(x.provider||'manual'),path:String(x.path).slice(0,1000)})) : [],
+        customOriginLabel:String(input.customOriginLabel||''),customOriginUrl:safeURL(input.customOriginUrl),
+        custom:!!input.custom
+      };
+    }
+    function normalizeState(raw) {
+      if(!raw || !Array.isArray(raw.skills)) throw new Error('ไฟล์ไม่มีรายการ skills');
+      const ids=new Set(); const skills=[];
+      raw.skills.forEach((skill,i)=>{
+        const item=normalSkill(skill, 'import-'+(i+1));
+        if(item && !ids.has(item.id)) {ids.add(item.id);skills.push(item);}
+      });
+      return {version:1,skills,checklist:{1:!!raw.checklist?.[1],2:!!raw.checklist?.[2],3:!!raw.checklist?.[3],4:!!raw.checklist?.[4]},lastScan:raw.lastScan && typeof raw.lastScan==='object' ? raw.lastScan : null};
+    }
+    try { const saved=localStorage.getItem(STORAGE_KEY); ui.state=saved?normalizeState(JSON.parse(saved)):baseState(); }
+    catch(e) {ui.state=baseState(); console.warn('Cannot load saved inventory',e);}
+    function save() { try {localStorage.setItem(STORAGE_KEY,JSON.stringify(ui.state));} catch(e) {toast('บันทึกใน Browser ไม่ได้ กรุณา Export JSON เพื่อเก็บข้อมูล');console.warn(e);} }
+    function toast(message) {
+      const el=document.getElementById('toast');el.textContent=message;el.hidden=false;
+      clearTimeout(toast.timeoutId);toast.timeoutId=setTimeout(()=>{el.hidden=true;},3500);
+    }
+    function icons(name) {
+      const base='width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"';
+      const shapes={
+        check:'<path d="m4 12 5 5L20 6"/>',
+        dot:'<circle cx="12" cy="12" r="8"/><path d="m8 12 3 3 5-6"/>',
+        folder:'<path d="M3 7a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v9H3z"/>',
+        flag:'<path d="M5 3v18M5 4h12l-3 5 3 5H5"/>',
+        search:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>'};
+      return `<svg ${base} aria-hidden="true">${shapes[name]||shapes.folder}</svg>`;
+    }
+    function stats() {
+      const s=ui.state.skills;const found=s.filter(x=>x.locations.length).length;
+      return {total:s.length,categories:new Set(s.map(x=>x.category)).size,sources:new Set(s.map(x=>x.originId==='custom'?('custom:'+(x.customOriginLabel||'unknown')):x.originId)).size,top:s.filter(x=>['S','A'].includes(x.tier)).length,found};
+    }
+    function renderGlobal() {
+      const s=stats();document.getElementById('navSkillCount').textContent=s.total;
+      document.getElementById('topCount').textContent=s.total+' SKILLS TRACKED';
+      document.getElementById('breadcrumb').textContent={library:'SKILL LIBRARY',tier:'TIER BOARD',sources:'ORIGINS & SOURCES',migration:'MIGRATION'}[ui.page];
+    }
+    function pageTo(name) {
+      if(!['library','tier','sources','migration'].includes(name)) return;
+      ui.page=name;document.querySelectorAll('[data-nav]').forEach(el=>{const active=el.dataset.nav===name;el.classList.toggle('active',active);if(active)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current');});
+      ['library','tier','sources','migration'].forEach(n=>document.getElementById('page-'+n).hidden=n!==name);
+      render();window.scrollTo(0,0);
+    }
+    function render() {renderGlobal();if(ui.page==='library')renderLibrary();if(ui.page==='tier')renderBoard();if(ui.page==='sources')renderSources();if(ui.page==='migration')renderMigration();}
+    function setupFilters(){
+      const cat=document.getElementById('categoryFilter');cat.insertAdjacentHTML('beforeend',CATEGORIES.map(c=>`<option value="${esc(c.id)}">${esc(c.label)}</option>`).join(''));
+      const src=document.getElementById('sourceFilter');src.insertAdjacentHTML('beforeend',Object.entries(SOURCES).map(([id,v])=>`<option value="${esc(id)}">${esc(v.name)}</option>`).join('')+'<option value="custom">Custom source</option>');
+    }
+    function renderLibrary() {
+      const count=stats();document.getElementById('libraryStats').innerHTML=[
+        {name:'Total skills',value:count.total,foot:'จากคลัง Skill Vault'},
+        {name:'Categories',value:count.categories,foot:'แยกประเภทตามการใช้งาน'},
+        {name:'Priority · S + A',value:count.top,foot:'Tier ที่จัดไว้เป็นลำดับต้น'},
+        {name:'Paths recorded',value:count.found,foot:'Path จาก Scan report ล่าสุด'}
+      ].map(s=>`<div class="stat"><div class="stat-caption">${esc(s.name)}</div><div class="stat-value mono">${s.value}</div><div class="stat-footer">${esc(s.foot)}</div></div>`).join('');
+      const f=ui.filters, query=f.search.toLowerCase();
+      document.getElementById('searchInput').value=f.search;
+      document.getElementById('categoryFilter').value=f.category;document.getElementById('sourceFilter').value=f.source;
+      document.getElementById('tierFilter').value=f.tier;document.getElementById('foundFilter').value=f.found;
+      const matching=ui.state.skills.filter(x=>{
+        const source=getSource(x);
+        const search=[x.name,x.description,x.notes,source.name,source.repo,x.category,...x.locations.map(loc=>loc.path)].join(' ').toLowerCase();
+        return (!query||search.includes(query)) && (f.category==='all'||x.category===f.category) &&
+          (f.source==='all'||x.originId===f.source) && (f.tier==='all'||x.tier===f.tier) &&
+          (f.found==='all'||(f.found==='found'?x.locations.length>0:x.locations.length===0));
+      });
+      document.getElementById('listCount').textContent=`แสดง ${Math.min(ui.visible,matching.length)} จาก ${matching.length} รายการ`;
+      document.getElementById('sourceLegend').textContent='SOURCE / CANDIDATE';
+      const grid=document.getElementById('skillGrid');
+      if(!matching.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><strong>ไม่พบ Skill ที่ตรงกับตัวกรอง</strong>ลองเปลี่ยนคำค้นหา หรือเลือกหมวดหมู่อื่น</div>';}else{
+        grid.innerHTML=matching.slice(0,ui.visible).map(x=>{
+          const src=getSource(x);const location=x.locations.length>0;
+          return `<article class="skill-card"><div class="card-top"><span class="card-index">${formatNum(x.number)||'—'} / ${location?'PATH RECORDED':'IN CATALOG'}</span>
+          <select class="tier-picker" data-tier="${x.tier}" data-tier-select="${esc(x.id)}" aria-label="Tier สำหรับ ${esc(x.name)}">${TIERS.map(t=>`<option value="${t.id}" ${x.tier===t.id?'selected':''}>${tierLabel(t.id)}</option>`).join('')}</select></div>
+          <button type="button" class="card-name" data-open="${esc(x.id)}">${esc(x.name)}</button><p class="card-desc">${esc(x.description || 'ยังไม่มีคำอธิบาย เพิ่มได้จากหน้ารายละเอียด')}</p>
+          <div class="card-footer"><span class="category-tag" title="${esc(x.category)}">${icons('folder')}${esc(x.category)}</span><div class="card-foot-side"><span title="${location?'พบ Path ในรายงาน Scan':'ยังไม่พบ Path จริง'}" class="${location?'found-icon':'missing-icon'}">${icons(location?'check':'dot')}</span>${x.notes?'<span class="note-indicator" title="มีบันทึก">●</span>':''}<span class="source-small" title="${esc(src.repo)}">${esc(src.name)}</span></div></div></article>`;
+        }).join('');
+      }
+      document.getElementById('loadMoreBtn').hidden=matching.length<=ui.visible;
+    }
+    function renderBoard() {
+      const board=document.getElementById('tierBoard');
+      board.innerHTML=TIERS.map(t=>{
+        const items=ui.state.skills.filter(x=>x.tier===t.id).sort((a,b)=>a.name.localeCompare(b.name));
+        return `<div class="tier-lane" data-tier="${t.id}"><div class="tier-label-col"><div class="tier-big">${esc(t.name==='UNRANKED'?'—':t.id)}</div><div class="tier-label-text">${esc(t.name)}<br>${items.length} skill${items.length===1?'':'s'}</div></div><div class="tier-content">
+          ${items.length?items.map(x=>`<button type="button" class="tier-token" draggable="true" data-drag="${esc(x.id)}" data-open="${esc(x.id)}" title="ลากไป Tier อื่น หรือคลิกเพื่อแก้ไข"><span class="dragdots" aria-hidden="true">⠿</span>${esc(x.name)}</button>`).join(''):`<span class="tier-empty">ลาก Skill มาวางที่นี่ · ${esc(t.desc)}</span>`}
+        </div></div>`;
+      }).join('');
+    }
+    function renderSources() {
+      const groups=new Map();
+      for(const skill of ui.state.skills){const key=skill.originId==='custom'?'custom:'+(skill.customOriginLabel||'unknown'):skill.originId;
+        if(!groups.has(key)) groups.set(key,{origin:getSource(skill),originId:skill.originId,customLabel:skill.customOriginLabel,items:[]});groups.get(key).items.push(skill);}
+      const sorted=[...groups.values()].sort((a,b)=>b.items.length-a.items.length || a.origin.name.localeCompare(b.origin.name));
+      document.getElementById('sourceGroupCount').textContent=sorted.length+' GROUPS';
+      document.getElementById('sourcesList').innerHTML=sorted.map(({origin,originId,customLabel,items})=>{
+        const repo=safeURL(origin.url);
+        const link=repo?`<a class="source-repo" href="${esc(repo)}" target="_blank" rel="noopener noreferrer" title="เปิด Repository">${esc(origin.repo)} ↗</a>`:`<span class="source-repo">${esc(origin.repo||'ยังไม่มีลิงก์ Repository')}</span>`;
+        return `<div class="source-card"><div class="source-monogram">${esc(origin.name.slice(0,1).toUpperCase())}</div><div><div class="source-name">${esc(origin.name)}</div>${link}</div><button type="button" class="source-count" data-source-view="${esc(originId)}" data-custom-label="${esc(customLabel||'')}" title="ดู Skills ในกลุ่มนี้" style="border:0;background:transparent;cursor:pointer">${items.length}<small>VIEW SKILLS</small></button></div>`;
+      }).join('');
+      const providers={};ui.state.skills.flatMap(x=>x.locations).forEach(loc=>{providers[loc.provider]=(providers[loc.provider]||0)+1;});
+      document.getElementById('detectedProviders').innerHTML=Object.keys(providers).length?Object.entries(providers).sort((a,b)=>b[1]-a[1]).map(([provider,count])=>`<span class="provider-chip">${esc(provider)} · ${count}</span>`).join(''):'<span class="path-label">ยังไม่มี Scan report</span>';
+    }
+    function renderMigration() {
+      const s=stats();document.getElementById('readyTotal').textContent=s.total;
+      document.getElementById('readyFound').textContent=s.found+' / '+s.total;
+      document.getElementById('readyUnfound').textContent=s.total-s.found;
+      const last=ui.state.lastScan; const date=last?.scannedAt?new Date(last.scannedAt):null;
+      document.getElementById('readyScanDate').textContent=date && !isNaN(date.getTime())?date.toLocaleDateString('th-TH'):'—';
+      document.getElementById('scanInfo').textContent=last?`Import ล่าสุด: ${last.count||0} รายการ · ${last.machine||'ไม่ทราบเครื่อง'} · จับคู่ได้ ${last.matched||0}`:'ยังไม่ได้ Import รายงานจากเครื่อง';
+      document.querySelectorAll('[data-check]').forEach(input=>input.checked=!!ui.state.checklist[input.dataset.check]);
+    }
+    function openDrawer(id=null) {
+      const skill=id===null?{id:'',number:0,name:'',category:CATEGORIES[0].id,originId:'custom',tier:'U',description:'',notes:'',locations:[],customOriginLabel:'',customOriginUrl:'',custom:true}:ui.state.skills.find(x=>x.id===String(id));
+      if(!skill)return;
+      ui.drawerId=id===null?null:String(id);ui.previousFocus=document.activeElement;
+      const editing=id!==null;
+      document.getElementById('drawerKicker').textContent=editing?'SKILL / EDIT DETAILS':'NEW / SKILL';
+      document.getElementById('drawerTitle').textContent=editing?skill.name:'เพิ่ม Skill ใหม่';
+      const field=(label,name,value,help='',type='text')=>`<label class="field"><span class="field-label">${esc(label)}</span><input type="${type}" name="${name}" value="${esc(value)}" ${name==='name'?'required maxlength="160"':''}>${help?`<span class="field-help">${esc(help)}</span>`:''}</label>`;
+      const src=getSource(skill);
+      document.getElementById('skillForm').innerHTML=`
+        ${field('ชื่อ Skill','name',skill.name)}
+        ${field('ใช้ทำอะไร','description',skill.description,'คำอธิบายสำหรับค้นหาจากหน้า Library')}
+        <div class="two-col"><label class="field"><span class="field-label">Category</span><select name="category">${CATEGORIES.map(c=>`<option value="${esc(c.id)}" ${skill.category===c.id?'selected':''}>${esc(c.label)}</option>`).join('')}</select></label>
+        <label class="field"><span class="field-label">Tier</span><select name="tier">${TIERS.map(t=>`<option value="${t.id}" ${skill.tier===t.id?'selected':''}>${esc(t.id)} · ${esc(t.name)}</option>`).join('')}</select></label></div>
+        <label class="field"><span class="field-label">Repository ต้นทาง (ยังไม่ยืนยันจากไฟล์จริง)</span><select name="originId" id="originInput">${Object.entries(SOURCES).map(([key,v])=>`<option value="${esc(key)}" ${skill.originId===key?'selected':''}>${esc(v.name)} — ${esc(v.repo)}</option>`).join('')}<option value="custom" ${skill.originId==='custom'?'selected':''}>Custom / Other</option></select><span class="field-help">Repository ที่พัฒนา Skill ≠ Provider หรือโฟลเดอร์ที่ OMP โหลด</span></label>
+        <div id="customOriginFields" ${skill.originId==='custom'?'':'hidden'}>${field('ชื่อ Repository / ผู้พัฒนา','customOriginLabel',skill.customOriginLabel)}${field('GitHub URL (https://...)','customOriginUrl',skill.customOriginUrl)}</div>
+        <div class="field"><label class="field-label" for="notesInput">Notes ส่วนตัว</label><textarea name="notes" id="notesInput" rows="4" placeholder="เหตุผลที่เก็บไว้, ตัวที่ทับซ้อน, วิธีติดตั้ง, คำสั่ง...">${esc(skill.notes)}</textarea></div>
+        <div class="field"><label class="field-label" for="pathsInput">Local paths (${skill.locations.length})</label><textarea name="paths" id="pathsInput" rows="3" placeholder="C:\\Users\\...\\skills\\skill-name">${esc(skill.locations.map(x=>x.path).join('\n'))}</textarea><span class="field-help">ใส่ Path บรรทัดละ 1 รายการ หรือ Import จาก PowerShell Scan</span>${skill.locations.length?`<span class="field-help">Provider: ${esc([...new Set(skill.locations.map(x=>x.provider))].join(', '))}</span>`:''}</div>
+        ${editing&&safeURL(src.url)?`<a class="btn btn-ghost" href="${esc(safeURL(src.url))}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;align-self:flex-start">เปิด Repository ↗</a>`:''}
+        <div class="drawer-footer">${editing?'<button type="button" class="btn btn-danger" id="deleteSkill">ลบจากคลัง</button>':'<span></span>'}<div style="display:flex;gap:8px"><button type="button" class="btn btn-ghost" id="cancelDrawer">ยกเลิก</button><button type="submit" class="btn btn-primary">บันทึก Skill</button></div></div>`;
+      document.getElementById('drawerBackdrop').hidden=false;document.body.style.overflow='hidden';
+      document.getElementById('originInput').addEventListener('change',e=>{document.getElementById('customOriginFields').hidden=e.target.value!=='custom';});
+      document.getElementById('skillForm').onsubmit=onSkillSave;
+      document.getElementById('cancelDrawer').onclick=closeDrawer;
+      if(editing)document.getElementById('deleteSkill').onclick=()=>{if(confirm(`ลบ "${skill.name}" ออกจากคลัง? ไม่ได้ลบไฟล์ Skill จริง`)){ui.state.skills=ui.state.skills.filter(x=>x.id!==skill.id);closeDrawer();save();render();toast('ลบจากคลังแล้ว (ไฟล์จริงไม่ได้ถูกลบ)');}};
+      document.querySelector('[name="name"]').focus();
+    }
+    function onSkillSave(e) {
+      e.preventDefault();const form=new FormData(e.currentTarget);
+      const name=String(form.get('name')||'').trim();if(!name)return;
+      const locations=String(form.get('paths')||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean).slice(0,60);
+      const existing=ui.drawerId!==null?ui.state.skills.find(x=>x.id===ui.drawerId):null;
+      const duplicate=ui.state.skills.find(x=>x.name.toLowerCase()===name.toLowerCase()&&x.id!==ui.drawerId);
+      if(duplicate){toast('มีชื่อ Skill นี้อยู่แล้ว');return;}
+      const next=normalSkill({
+        ...(existing||{}),id:existing?.id||('custom-'+Date.now()),number:existing?.number||ui.state.skills.length+1,
+        name,description:String(form.get('description')||''),category:form.get('category'),originId:form.get('originId'),tier:form.get('tier'),
+        customOriginLabel:String(form.get('customOriginLabel')||''),customOriginUrl:String(form.get('customOriginUrl')||''),notes:String(form.get('notes')||''),
+        locations:locations.map(path=>({path,provider:existing?.locations.find(x=>x.path===path)?.provider||'manual'})),custom:existing?.custom??true
+      });
+      if(existing){ui.state.skills=ui.state.skills.map(x=>x.id===existing.id?next:x);}else{ui.state.skills.push(next);}
+      closeDrawer();save();render();toast(existing?'บันทึกการแก้ไขแล้ว':'เพิ่ม Skill แล้ว');
+    }
+    function closeDrawer() {document.getElementById('drawerBackdrop').hidden=true;document.body.style.overflow='';ui.drawerId=null;if(ui.previousFocus?.isConnected)ui.previousFocus.focus();}
+    function download(filename,content,type='application/json;charset=utf-8'){
+      const blob=new Blob([content],{type});const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    }
+    function exportJSON(){download('skill-vault.json',JSON.stringify({schema:'skill-vault/1',exportedAt:new Date().toISOString(),...ui.state},null,2));toast('Export JSON แล้ว — เก็บไฟล์นี้ไว้สำหรับเครื่องใหม่');}
+    function exportMarkdown(){
+      const rows=ui.state.skills.slice().sort((a,b)=>a.number-b.number);
+      const clean=(s)=>String(s??'').replace(/\|/g,'\\|').replace(/\r?\n/g,' ').trim();
+      const content=['# Skill Vault — Agent Skill Inventory','',`Exported: ${new Date().toISOString()}`,'','> ตารางนี้เป็นรายการและ Tier เท่านั้น **ไม่ใช่การสำรองไฟล์ SKILL.md**','', '| # | Skill | Tier | Category | Repository | Local paths |','|---:|---|:---:|---|---|---|',...rows.map(x=>`| ${x.number||'—'} | ${clean(x.name)} | ${clean(x.tier)} | ${clean(x.category)} | ${clean(getSource(x).repo)} | ${clean(x.locations.map(loc=>loc.path).join('; '))} |`),'','## Notes','',...rows.filter(x=>x.notes).map(x=>`### ${x.name}\n\n${x.notes}\n`)].join('\n');
+      download('skill-vault.md',content,'text/markdown;charset=utf-8');toast('Export Markdown แล้ว');
+    }
+    async function readJSON(file){const text=await file.text();return JSON.parse(text.replace(/^\uFEFF/,''));}
+    async function importInventory(file){
+      try{const input=await readJSON(file);
+        if(input.schema==='skill-vault-scan/1'){await importScan(file,input);return;}
+        const data=normalizeState(input);
+        if(!confirm(`นำเข้าคลัง ${data.skills.length} Skills และแทนที่ข้อมูลปัจจุบัน ${ui.state.skills.length} ตัว? หากยังไม่เคย Export JSON โปรดกดยกเลิกก่อน`))return;
+        ui.state=data;ui.visible=24;ui.filters={search:'',category:'all',source:'all',tier:'all',found:'all'};save();render();toast('Import Skill Vault สำเร็จ '+data.skills.length+' ตัว');
+      }catch(e){toast('Import ไม่สำเร็จ: '+e.message);console.error(e);}
+    }
+    async function importScan(file,preParsed){
+      try{
+        const report=preParsed||await readJSON(file);
+        if(report.schema!=='skill-vault-scan/1'||!Array.isArray(report.skills))throw new Error('ต้องใช้ไฟล์ skill-vault-scan.json จาก PowerShell');
+        if(!confirm(`อ่าน Scan report ${report.skills.length} รายการ? จะอัปเดต Path ที่เคย Scan แต่เก็บ Tier/Notes เดิมไว้`))return;
+        for(const skill of ui.state.skills){skill.locations=skill.locations.filter(x=>x.provider==='manual');}
+        let matched=0,added=0;
+        for(const item of report.skills){
+          if(!item||typeof item.name!=='string'||typeof item.path!=='string')continue;
+          const name=item.name.trim();const provider=String(item.provider||'unknown').trim();const path=item.path.trim();if(!name||!path)continue;
+          const lower=name.toLowerCase();
+          const preferred=provider.toLowerCase().includes('agents')?ui.state.skills.find(x=>x.name.toLowerCase()==='agents/'+lower):null;
+          let found=preferred||ui.state.skills.find(x=>x.name.toLowerCase()===lower);
+          if(!found){found=normalSkill({id:'scanned-'+Date.now()+'-'+added,number:ui.state.skills.length+1,name,category:'Agent & Tools',originId:'custom',customOriginLabel:'จากเครื่อง (ไม่ระบุ Repo)',tier:'U',description:'พบจาก PowerShell Scan',custom:true},'scanned-'+added);ui.state.skills.push(found);added++;}else matched++;
+          if(!found.locations.some(x=>x.path.toLowerCase()===path.toLowerCase()))found.locations.push({provider,path});
+        }
+        ui.state.lastScan={scannedAt:String(report.scannedAt||new Date().toISOString()),machine:String(report.machine||''),count:report.skills.length,matched,added};
+        save();render();toast(`Import Scan แล้ว · จับคู่ ${matched} · เพิ่ม ${added} รายการ`);
+      }catch(e){toast('Import Scan ไม่สำเร็จ: '+e.message);console.error(e);}
+    }
+    function resetSuggested(){if(!confirm('เปลี่ยน Tier ทุก Skill กลับเป็นค่าแนะนำเริ่มต้น?'))return;const ranking=Object.fromEntries(SEED.skills.map(x=>[x.name,x.tier]));ui.state.skills.forEach(x=>x.tier=ranking[x.name]||'U');save();render();toast('คืน Tier เริ่มต้นแล้ว');}
+    function clearTiers(){if(!confirm('ล้าง Tier ทุก Skill ให้เป็น Unranked?'))return;ui.state.skills.forEach(x=>x.tier='U');save();render();toast('ล้าง Tier แล้ว');}
+    function handleAction(action){
+      if(action==='add-skill')openDrawer();
+      if(action==='export-json')exportJSON();
+      if(action==='export-markdown')exportMarkdown();
+      if(action==='import-inventory')document.getElementById('inventoryFile').click();
+      if(action==='import-scan')document.getElementById('scanFile').click();
+      if(action==='reset-suggested')resetSuggested();
+      if(action==='clear-tiers')clearTiers();
+      if(action==='download-script'){download('skill-vault-backup.ps1',document.getElementById('backupPowerShell').textContent,'text/plain;charset=utf-8');toast('ดาวน์โหลด PowerShell แล้ว');}
+      if(action==='copy-command'){
+        const command=document.getElementById('scanCommand').textContent;
+        if(navigator.clipboard && window.isSecureContext){navigator.clipboard.writeText(command).then(()=>toast('คัดลอกคำสั่งแล้ว')).catch(()=>toast('กรุณาคัดลอกคำสั่งด้วยตนเอง'));}
+        else{const textarea=document.createElement('textarea');textarea.value=command;document.body.appendChild(textarea);textarea.select();const ok=document.execCommand('copy');textarea.remove();toast(ok?'คัดลอกคำสั่งแล้ว':'กรุณาคัดลอกคำสั่งด้วยตนเอง');}
+      }
+      if(action==='reset-catalog'){
+        if(!confirm('คืนรายการ 72 ตัวและ Tier เริ่มต้นทั้งหมด? รายการที่เพิ่มเอง, Notes และ Scan report จะหาย หากต้องการเก็บไว้ให้ Export JSON ก่อน'))return;
+        ui.state=baseState();save();ui.filters={search:'',category:'all',source:'all',tier:'all',found:'all'};render();toast('คืนรายการเริ่มต้นแล้ว');
+      }
+    }
+    document.addEventListener('click',e=>{
+      const nav=e.target.closest('[data-nav]');if(nav){pageTo(nav.dataset.nav);return;}
+      const action=e.target.closest('[data-action]');if(action){handleAction(action.dataset.action);return;}
+      const opener=e.target.closest('[data-open]');if(opener){openDrawer(opener.dataset.open);return;}
+      const view=e.target.closest('[data-source-view]');if(view){ui.filters={search:'',category:'all',source:view.dataset.sourceView,tier:'all',found:'all'};ui.visible=72;pageTo('library');return;}
+    });
+    document.addEventListener('change',e=>{
+      const tier=e.target.closest('[data-tier-select]');if(tier){const skill=ui.state.skills.find(x=>x.id===tier.dataset.tierSelect);if(skill){skill.tier=tier.value;save();render();}return;}
+      const check=e.target.closest('[data-check]');if(check){ui.state.checklist[check.dataset.check]=check.checked;save();return;}
+      const fields={categoryFilter:'category',sourceFilter:'source',tierFilter:'tier',foundFilter:'found'};
+      if(fields[e.target.id]){ui.filters[fields[e.target.id]]=e.target.value;ui.visible=24;renderLibrary();}
+    });
+    document.getElementById('searchInput').addEventListener('input',e=>{ui.filters.search=e.target.value;ui.visible=24;renderLibrary();document.getElementById('searchInput').focus();document.getElementById('searchInput').setSelectionRange(ui.filters.search.length,ui.filters.search.length);});
+    document.getElementById('loadMoreBtn').addEventListener('click',()=>{ui.visible+=24;renderLibrary();});
+    document.getElementById('closeDrawer').addEventListener('click',closeDrawer);
+    document.getElementById('drawerBackdrop').addEventListener('mousedown',e=>{if(e.target.id==='drawerBackdrop')closeDrawer();});
+    document.getElementById('inventoryFile').addEventListener('change',async e=>{const file=e.target.files[0];if(file)await importInventory(file);e.target.value='';});
+    document.getElementById('scanFile').addEventListener('change',async e=>{const file=e.target.files[0];if(file)await importScan(file);e.target.value='';});
+    document.addEventListener('keydown',e=>{
+      if(e.key==='Escape' && !document.getElementById('drawerBackdrop').hidden){closeDrawer();return;}
+      const tag=document.activeElement?.tagName||'';
+      if(e.key==='/' && ui.page==='library' && !['INPUT','TEXTAREA','SELECT'].includes(tag) && document.getElementById('drawerBackdrop').hidden){e.preventDefault();document.getElementById('searchInput').focus();}
+    });
+    const board=document.getElementById('tierBoard');
+    board.addEventListener('dragstart',e=>{const token=e.target.closest('[data-drag]');if(!token)return;e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',token.dataset.drag);token.classList.add('dragging');});
+    board.addEventListener('dragend',e=>{e.target.closest('[data-drag]')?.classList.remove('dragging');board.querySelectorAll('.tier-lane').forEach(x=>x.classList.remove('drag-over'));});
+    board.addEventListener('dragover',e=>{const lane=e.target.closest('.tier-lane');if(lane){e.preventDefault();e.dataTransfer.dropEffect='move';board.querySelectorAll('.tier-lane').forEach(x=>x.classList.toggle('drag-over',x===lane));}});
+    board.addEventListener('drop',e=>{const lane=e.target.closest('.tier-lane');if(!lane)return;e.preventDefault();board.querySelectorAll('.tier-lane').forEach(x=>x.classList.remove('drag-over'));
+      const id=e.dataTransfer.getData('text/plain');const item=ui.state.skills.find(x=>x.id===id);if(!item)return;
+      item.tier=lane.dataset.tier;save();renderBoard();toast(`ย้าย ${item.name} ไป Tier ${tierLabel(item.tier)} แล้ว`);
+    });
+    setupFilters();render();
+  </script>
+</body>
+</html>
